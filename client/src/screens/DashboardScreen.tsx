@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, ActivityIndicator, Button } from 'react-native';
 import axios from 'axios';
 import { getToken } from '../utils/storage';
 import { LineChart } from 'react-native-chart-kit';
 import { Dimensions } from 'react-native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+// import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { API_BASE_URL } from '@/constants/constant';
+import { useFocusEffect } from '@react-navigation/native';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -32,9 +33,11 @@ const DashboardScreen = () => {
     }
   };
 
-  useEffect(() => {
+  useFocusEffect(
+  useCallback(() => {
     fetchStats();
-  }, []);
+  }, [])
+);
 
   if (loading) {
     return (
@@ -77,7 +80,7 @@ const DashboardScreen = () => {
       </View>
 
       <View style={styles.card}>
-        <Text style={styles.label}>Failed Payments:</Text>
+        <Text style={styles.label}>Total Failed Payments:</Text>
         <Text style={styles.value}>{stats.failedCount}</Text>
       </View>
 

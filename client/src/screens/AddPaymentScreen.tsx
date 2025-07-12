@@ -20,41 +20,42 @@ const AddPaymentScreen = () => {
   const [method, setMethod] = useState('upi');
   const [status, setStatus] = useState('success');
   const [loading, setLoading] = useState(false);
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
 
   const handleAdd = async () => {
-    if (!amount || !receiver) {
-      Alert.alert('Error', 'Please fill in all fields');
-      return;
-    }
+  if (!amount || !receiver) {
+    Alert.alert('Error', 'Please fill in all fields');
+    return;
+  }
 
-    setLoading(true);
+  setLoading(true);
 
-    try {
-      const token = await getToken('token');
-      await axios.post(
-        `${API_BASE_URL}/payments`,
-        {
-          amount: parseFloat(amount),
-          receiver,
-          method,
-          status,
+  try {
+    const token = await getToken('token');
+    await axios.post(
+      `${API_BASE_URL}/payments`,
+      {
+        amount: parseFloat(amount),
+        receiver,
+        method,
+        status,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      }
+    );
 
-      Alert.alert('Success', 'Payment added!');
-      navigation.goBack();
-    } catch (err: any) {
-      Alert.alert('Error', err?.response?.data?.message || 'Failed to add');
-    } finally {
-      setLoading(false);
-    }
-  };
+    Alert.alert('Success', 'Payment added!');
+    navigation.navigate('Transactions'); // Go to transactions tab
+  } catch (err: any) {
+    Alert.alert('Error', err?.response?.data?.message || 'Failed to add');
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <View style={styles.container}>
