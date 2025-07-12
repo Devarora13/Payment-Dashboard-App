@@ -38,10 +38,13 @@ const LoginScreen = () => {
     setLoading(true);
 
     try {
+      console.log('Sending login request...');
       const res = await axios.post(`${API_BASE_URL}/auth/login`, {
         username,
         password,
       });
+
+      console.log('Response:', res.data);
 
       await saveToken("token", res.data.token);
 

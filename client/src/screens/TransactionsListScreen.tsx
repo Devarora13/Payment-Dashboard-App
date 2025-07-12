@@ -1,15 +1,21 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from "react";
 import {
-  View, Text, StyleSheet, FlatList, ActivityIndicator,
-  TouchableOpacity, Button, Platform
-} from 'react-native';
-import axios from 'axios';
-import { getToken } from '../utils/storage';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { API_BASE_URL } from '@/constants/constant';
-import { Picker } from '@react-native-picker/picker';
-import DateTimePicker from '@react-native-community/datetimepicker';
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  ActivityIndicator,
+  TouchableOpacity,
+  Button,
+  Platform,
+} from "react-native";
+import axios from "axios";
+import { getToken } from "../utils/storage";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { API_BASE_URL } from "@/constants/constant";
+import { Picker } from "@react-native-picker/picker";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 type Transaction = {
   _id: string;
@@ -26,8 +32,8 @@ const TransactionsListScreen = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  const [status, setStatus] = useState('');
-  const [method, setMethod] = useState('');
+  const [status, setStatus] = useState("");
+  const [method, setMethod] = useState("");
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
 
@@ -43,9 +49,10 @@ const TransactionsListScreen = () => {
       if (reset) {
         setLoading(true);
         setPage(1);
+        setTransactions([]); // ✅ Clear list on reset
       }
 
-      const token = await getToken('token');
+      const token = await getToken("token");
       const query: any = {
         page: reset ? 1 : page,
         limit: 10,
@@ -61,10 +68,16 @@ const TransactionsListScreen = () => {
         params: query,
       });
 
-      setTransactions(reset ? res.data.data : [...transactions, ...res.data.data]);
+      // ✅ Fix to show new items on top and paginate old ones correctly
+      if (reset || page === 1) {
+        setTransactions(res.data.data);
+      } else {
+        setTransactions((prev) => [...prev, ...res.data.data]);
+      }
+
       setTotalPages(res.data.totalPages);
     } catch (err) {
-      console.log('Failed to fetch transactions:', err);
+      console.log("Failed to fetch transactions:", err);
     } finally {
       setLoading(false);
     }
@@ -76,15 +89,27 @@ const TransactionsListScreen = () => {
     }, [status, method, startDate, endDate])
   );
 
+  useEffect(() => {
+    if (page !== 1) {
+      fetchTransactions();
+    }
+  }, [page]);
+
   const renderItem = ({ item }: { item: Transaction }) => (
     <TouchableOpacity
-      onPress={() => navigation.navigate('TransactionDetails', { transaction: item })}
+      onPress={() =>
+        navigation.navigate("TransactionDetails", { transaction: item })
+      }
       style={styles.card}
     >
       <Text style={styles.receiver}>{item.receiver}</Text>
-      <Text>₹{item.amount.toLocaleString('en-IN')}</Text>
-      <Text>{item.method.toUpperCase()} • {item.status}</Text>
-      <Text style={styles.date}>{new Date(item.createdAt).toLocaleString()}</Text>
+      <Text>₹{item.amount.toLocaleString("en-IN")}</Text>
+      <Text>
+        {item.method.toUpperCase()} • {item.status}
+      </Text>
+      <Text style={styles.date}>
+        {new Date(item.createdAt).toLocaleString()}
+      </Text>
     </TouchableOpacity>
   );
 
@@ -119,13 +144,38 @@ const TransactionsListScreen = () => {
         </Picker>
 
         <View style={styles.dateRow}>
+          {/* Both web & mobile platform date pickers support */}
           <Button
             title={startDate ? startDate.toDateString() : "Start Date"}
-            onPress={() => setShowStartPicker(true)}
+            onPress={() => {
+              if (Platform.OS === "web") {
+                const input = document.createElement("input");
+                input.type = "date";
+                input.onchange = (e: any) => {
+                  const val = e.target.value;
+                  if (val) setStartDate(new Date(val));
+                };
+                input.click();
+              } else {
+                setShowStartPicker(true);
+              }
+            }}
           />
           <Button
             title={endDate ? endDate.toDateString() : "End Date"}
-            onPress={() => setShowEndPicker(true)}
+            onPress={() => {
+              if (Platform.OS === "web") {
+                const input = document.createElement("input");
+                input.type = "date";
+                input.onchange = (e: any) => {
+                  const val = e.target.value;
+                  if (val) setEndDate(new Date(val));
+                };
+                input.click();
+              } else {
+                setShowEndPicker(true);
+              }
+            }}
           />
         </View>
 
@@ -169,9 +219,12 @@ const TransactionsListScreen = () => {
           />
           {page < totalPages && (
             <View style={styles.loadMoreBtn}>
-              <Button title="Load More" onPress={() => {
-                setPage(prev => prev + 1);
-              }} />
+              <Button
+                title="Load More"
+                onPress={() => {
+                  setPage((prev) => prev + 1);
+                }}
+              />
             </View>
           )}
         </>
@@ -194,8 +247,8 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   dateRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     gap: 12,
   },
   container: {
@@ -203,26 +256,26 @@ const styles = StyleSheet.create({
   },
   center: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   card: {
     padding: 12,
     borderRadius: 10,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: "#f0f0f0",
     marginBottom: 12,
   },
   receiver: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
     fontSize: 16,
   },
   date: {
     fontSize: 12,
-    color: '#777',
+    color: "#777",
     marginTop: 4,
   },
   loadMoreBtn: {
     marginTop: 8,
-    alignItems: 'center',
+    alignItems: "center",
   },
 });

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -7,55 +7,57 @@ import {
   Button,
   Alert,
   Platform,
-} from 'react-native';
-import { Picker } from '@react-native-picker/picker';
-import axios from 'axios';
-import { getToken } from '../utils/storage';
-import { useNavigation } from '@react-navigation/native';
-import { API_BASE_URL } from '@/constants/constant';
+} from "react-native";
+import { Picker } from "@react-native-picker/picker";
+import axios from "axios";
+import { getToken } from "../utils/storage";
+import { useNavigation } from "@react-navigation/native";
+import { API_BASE_URL } from "@/constants/constant";
 
 const AddPaymentScreen = () => {
-  const [amount, setAmount] = useState('');
-  const [receiver, setReceiver] = useState('');
-  const [method, setMethod] = useState('upi');
-  const [status, setStatus] = useState('success');
+  const [amount, setAmount] = useState("");
+  const [receiver, setReceiver] = useState("");
+  const [method, setMethod] = useState("upi");
+  const [status, setStatus] = useState("success");
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation<any>();
 
   const handleAdd = async () => {
-  if (!amount || !receiver) {
-    Alert.alert('Error', 'Please fill in all fields');
-    return;
-  }
+    if (!amount || !receiver) {
+      Alert.alert("Error", "Please fill in all fields");
+      return;
+    }
 
-  setLoading(true);
+    setLoading(true);
 
-  try {
-    const token = await getToken('token');
-    await axios.post(
-      `${API_BASE_URL}/payments`,
-      {
-        amount: parseFloat(amount),
-        receiver,
-        method,
-        status,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
+    try {
+      const token = await getToken("token");
+      await axios.post(
+        `${API_BASE_URL}/payments`,
+        {
+          amount: parseFloat(amount),
+          receiver,
+          method,
+          status,
         },
-      }
-    );
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-    Alert.alert('Success', 'Payment added!');
-    navigation.navigate('Transactions'); // Go to transactions tab
-  } catch (err: any) {
-    Alert.alert('Error', err?.response?.data?.message || 'Failed to add');
-  } finally {
-    setLoading(false);
-  }
-};
-
+      Alert.alert("Success", "Payment added!");
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "Transactions" }],
+      });
+    } catch (err: any) {
+      Alert.alert("Error", err?.response?.data?.message || "Failed to add");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -99,7 +101,7 @@ const AddPaymentScreen = () => {
       </Picker>
 
       <Button
-        title={loading ? 'Submitting...' : 'Submit Payment'}
+        title={loading ? "Submitting..." : "Submit Payment"}
         onPress={handleAdd}
         disabled={loading}
       />
@@ -113,22 +115,22 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    paddingTop: Platform.OS === 'android' ? 40 : 20,
+    paddingTop: Platform.OS === "android" ? 40 : 20,
   },
   heading: {
     fontSize: 22,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 24,
   },
   input: {
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     padding: 12,
     borderRadius: 8,
     marginBottom: 16,
   },
   label: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 8,
   },
   picker: {
