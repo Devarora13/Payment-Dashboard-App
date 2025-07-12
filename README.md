@@ -35,26 +35,27 @@ A full-stack mobile app to track payments, manage users, and view analytics. Bui
 
 > Light, responsive UI with native feel
 
-- **Login**  
-![Login](./screenshots/login.png)
+### 🔐 Login  
+<img src="./screenshots/login.png" width="300" />
 
-- **Dashboard**  
-![Dashboard](./screenshots/dashboard.png)
+### 📊 Dashboard  
+<img src="./screenshots/dashboard.png" width="300" />
 
-- **Transactions List**  
-![Transactions](./screenshots/transactionlist.png)
+### 📋 Transactions List  
+<img src="./screenshots/transactionlist.png" width="300" />
 
-- **Transaction Details**  
-![Transaction Detail](./screenshots/transaction-details.png)
+### 📄 Transaction Details  
+<img src="./screenshots/transaction-details.png" width="300" />
 
-- **Add Payment**  
-![Add Payment](./screenshots/add-payment.png)
+### ➕ Add Payment  
+<img src="./screenshots/add-payment.png" width="300" />
 
-- **Users List** *(Admin)*  
-![Users](./screenshots/user-list.png)
+### 👥 Users List *(Admin)*  
+<img src="./screenshots/user-list.png" width="300" />
 
-- **Add User** *(Admin)*  
-![Add User](./screenshots/add-user.png)
+### ➕ Add User *(Admin)*  
+<img src="./screenshots/add-user.png" width="300" />
+
 
 ---
 
