@@ -49,7 +49,7 @@ const TransactionsListScreen = () => {
       if (reset) {
         setLoading(true);
         setPage(1);
-        setTransactions([]); // ✅ Clear list on reset
+        setTransactions([]);
       }
 
       const token = await getToken("token");
@@ -68,7 +68,6 @@ const TransactionsListScreen = () => {
         params: query,
       });
 
-      // ✅ Fix to show new items on top and paginate old ones correctly
       if (reset || page === 1) {
         setTransactions(res.data.data);
       } else {
@@ -95,6 +94,19 @@ const TransactionsListScreen = () => {
     }
   }, [page]);
 
+  const getStatusStyle = (status: string) => {
+    switch (status) {
+      case "success":
+        return styles.status_success;
+      case "pending":
+        return styles.status_pending;
+      case "failed":
+        return styles.status_failed;
+      default:
+        return {};
+    }
+  };
+
   const renderItem = ({ item }: { item: Transaction }) => (
     <TouchableOpacity
       onPress={() =>
@@ -103,8 +115,8 @@ const TransactionsListScreen = () => {
       style={styles.card}
     >
       <Text style={styles.receiver}>{item.receiver}</Text>
-      <Text>₹{item.amount.toLocaleString("en-IN")}</Text>
-      <Text>
+      <Text style={styles.amount}>₹{item.amount.toLocaleString("en-IN")}</Text>
+      <Text style={[styles.status, getStatusStyle(item.status)]}>
         {item.method.toUpperCase()} • {item.status}
       </Text>
       <Text style={styles.date}>
@@ -112,10 +124,6 @@ const TransactionsListScreen = () => {
       </Text>
     </TouchableOpacity>
   );
-
-  const loadMore = () => {
-    setPage((prev) => prev + 1);
-  };
 
   return (
     <View style={styles.wrapper}>
@@ -144,7 +152,6 @@ const TransactionsListScreen = () => {
         </Picker>
 
         <View style={styles.dateRow}>
-          {/* Both web & mobile platform date pickers support */}
           <Button
             title={startDate ? startDate.toDateString() : "Start Date"}
             onPress={() => {
@@ -219,12 +226,7 @@ const TransactionsListScreen = () => {
           />
           {page < totalPages && (
             <View style={styles.loadMoreBtn}>
-              <Button
-                title="Load More"
-                onPress={() => {
-                  setPage((prev) => prev + 1);
-                }}
-              />
+              <Button title="Load More" onPress={() => setPage((prev) => prev + 1)} />
             </View>
           )}
         </>
@@ -260,19 +262,43 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   card: {
-    padding: 12,
-    borderRadius: 10,
-    backgroundColor: "#f0f0f0",
+    padding: 16,
+    borderRadius: 12,
+    backgroundColor: "#fff",
     marginBottom: 12,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 3,
   },
   receiver: {
     fontWeight: "bold",
     fontSize: 16,
+    marginBottom: 4,
+  },
+  amount: {
+    fontSize: 18,
+    fontWeight: "600",
+    marginBottom: 4,
+  },
+  status: {
+    fontSize: 14,
+    fontWeight: "500",
+    marginBottom: 4,
+  },
+  status_success: {
+    color: "green",
+  },
+  status_pending: {
+    color: "orange",
+  },
+  status_failed: {
+    color: "red",
   },
   date: {
     fontSize: 12,
     color: "#777",
-    marginTop: 4,
   },
   loadMoreBtn: {
     marginTop: 8,

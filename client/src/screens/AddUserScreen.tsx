@@ -3,11 +3,11 @@ import {
   View,
   Text,
   TextInput,
-  Button,
-  StyleSheet,
   Alert,
   ActivityIndicator,
   TouchableOpacity,
+  StyleSheet,
+  Platform,
 } from 'react-native';
 import axios from 'axios';
 import { getToken } from '../utils/storage';
@@ -24,7 +24,6 @@ const AddUserScreen = () => {
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation<any>();
 
-  // 🔐 Restrict access to admin only
   useEffect(() => {
     const checkRole = async () => {
       const userRole = await getUserRole();
@@ -66,7 +65,6 @@ const AddUserScreen = () => {
 
   return (
     <View style={styles.container}>
-      {/* 🔙 Back button */}
       <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
         <Ionicons name="arrow-back" size={24} color="#007AFF" />
         <Text style={styles.backText}>Back</Text>
@@ -74,37 +72,43 @@ const AddUserScreen = () => {
 
       <Text style={styles.title}>Add New User</Text>
 
-      <TextInput
-        placeholder="Username"
-        value={username}
-        onChangeText={setUsername}
-        style={styles.input}
-        autoCapitalize="none"
-      />
+      <View style={styles.card}>
+        <TextInput
+          placeholder="Username"
+          value={username}
+          onChangeText={setUsername}
+          style={styles.input}
+          autoCapitalize="none"
+        />
 
-      <TextInput
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        style={styles.input}
-        secureTextEntry
-      />
+        <TextInput
+          placeholder="Password"
+          value={password}
+          onChangeText={setPassword}
+          style={styles.input}
+          secureTextEntry
+        />
 
-      <Text style={styles.label}>Select Role:</Text>
-      <Picker
-        selectedValue={role}
-        onValueChange={(itemValue) => setRole(itemValue)}
-        style={styles.picker}
-      >
-        <Picker.Item label="Viewer" value="viewer" />
-        <Picker.Item label="Admin" value="admin" />
-      </Picker>
+        <Text style={styles.label}>Select Role:</Text>
+        <View style={styles.pickerContainer}>
+          <Picker
+            selectedValue={role}
+            onValueChange={(itemValue) => setRole(itemValue)}
+            style={styles.picker}
+          >
+            <Picker.Item label="Viewer" value="viewer" />
+            <Picker.Item label="Admin" value="admin" />
+          </Picker>
+        </View>
 
-      {loading ? (
-        <ActivityIndicator size="large" />
-      ) : (
-        <Button title="Create User" onPress={handleAddUser} />
-      )}
+        {loading ? (
+          <ActivityIndicator size="large" color="#007AFF" />
+        ) : (
+          <TouchableOpacity style={styles.button} onPress={handleAddUser}>
+            <Text style={styles.buttonText}>Create User</Text>
+          </TouchableOpacity>
+        )}
+      </View>
     </View>
   );
 };
@@ -112,7 +116,11 @@ const AddUserScreen = () => {
 export default AddUserScreen;
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20 },
+  container: {
+    flex: 1,
+    backgroundColor: '#f8f9fa',
+    padding: 20,
+  },
   backButton: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -123,22 +131,55 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#007AFF',
   },
-  title: { fontSize: 22, fontWeight: 'bold', marginBottom: 20 },
+  title: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#333',
+    marginBottom: 20,
+  },
+  card: {
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    elevation: 3,
+  },
   input: {
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: '#ddd',
     borderRadius: 10,
-    padding: 10,
+    padding: 12,
     marginBottom: 15,
+    backgroundColor: '#fff',
   },
   label: {
     fontSize: 16,
     fontWeight: '500',
-    marginBottom: 5,
+    marginBottom: 6,
+    color: '#444',
+  },
+  pickerContainer: {
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 10,
+    marginBottom: 20,
+    overflow: 'hidden',
+    backgroundColor: '#fff',
   },
   picker: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    marginBottom: 20,
+    height: Platform.OS === 'ios' ? 150 : 50,
+  },
+  button: {
+    backgroundColor: '#007AFF',
+    padding: 14,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: '#fff',
+    fontWeight: '600',
+    fontSize: 16,
   },
 });

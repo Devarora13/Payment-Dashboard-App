@@ -5,7 +5,7 @@ import {
   StyleSheet,
   FlatList,
   ActivityIndicator,
-  Button,
+  TouchableOpacity,
   Alert,
 } from 'react-native';
 import axios from 'axios';
@@ -67,17 +67,22 @@ const UsersListScreen = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Users</Text>
+
       <FlatList
         data={users}
         keyExtractor={(item) => item._id}
+        contentContainerStyle={{ paddingBottom: 20 }}
         renderItem={({ item }) => (
           <View style={styles.card}>
             <Text style={styles.username}>{item.username}</Text>
-            <Text>{item.role}</Text>
+            <Text style={styles.role}>{item.role}</Text>
           </View>
         )}
       />
-      <Button title="Add User" onPress={() => navigation.navigate('AddUser')} />
+
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('AddUser')}>
+        <Text style={styles.buttonText}>+ Add User</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -85,14 +90,57 @@ const UsersListScreen = () => {
 export default UsersListScreen;
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20 },
-  center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  title: { fontSize: 22, fontWeight: 'bold', marginBottom: 16 },
-  card: {
-    padding: 12,
-    borderRadius: 10,
-    backgroundColor: '#f0f0f0',
-    marginBottom: 12,
+  container: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: '#fafafa',
   },
-  username: { fontWeight: 'bold', fontSize: 16 },
+  center: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  title: {
+    fontSize: 26,
+    fontWeight: '700',
+    marginBottom: 20,
+    color: '#333',
+  },
+  card: {
+    padding: 16,
+    borderRadius: 12,
+    backgroundColor: '#fff',
+    marginBottom: 12,
+    shadowColor: '#000',
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 3,
+  },
+  username: {
+    fontWeight: 'bold',
+    fontSize: 18,
+    color: '#222',
+  },
+  role: {
+    fontSize: 14,
+    color: '#555',
+    marginTop: 4,
+  },
+  button: {
+    marginTop: 20,
+    backgroundColor: '#007bff',
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    shadowColor: '#007bff',
+    shadowOpacity: 0.3,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 3,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
 });

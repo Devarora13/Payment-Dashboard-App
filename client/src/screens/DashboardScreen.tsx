@@ -1,21 +1,19 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
   ActivityIndicator,
-  Button,
-} from "react-native";
-import axios from "axios";
-import { getToken } from "../utils/storage";
-import { LineChart } from "react-native-chart-kit";
-import { Dimensions } from "react-native";
-// import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { API_BASE_URL } from "@/constants/constant";
-import { useFocusEffect } from "@react-navigation/native";
+  Dimensions,
+} from 'react-native';
+import { LineChart } from 'react-native-chart-kit';
+import axios from 'axios';
+import { useFocusEffect } from '@react-navigation/native';
+import { getToken } from '../utils/storage';
+import { API_BASE_URL } from '@/constants/constant';
 
-const screenWidth = Dimensions.get("window").width;
+const screenWidth = Dimensions.get('window').width;
 
 const DashboardScreen = () => {
   const [stats, setStats] = useState<any>(null);
@@ -24,15 +22,13 @@ const DashboardScreen = () => {
   const fetchStats = async () => {
     setLoading(true);
     try {
-      const token = await getToken("token");
+      const token = await getToken('token');
       const res = await axios.get(`${API_BASE_URL}/payments/stats`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
       setStats(res.data);
     } catch (err) {
-      console.log("Error fetching stats:", err);
+      console.log('Error fetching stats:', err);
     } finally {
       setLoading(false);
     }
@@ -47,7 +43,7 @@ const DashboardScreen = () => {
   if (loading) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator size="large" />
+        <ActivityIndicator size="large" color="#007AFF" />
       </View>
     );
   }
@@ -55,17 +51,17 @@ const DashboardScreen = () => {
   if (!stats) {
     return (
       <View style={styles.center}>
-        <Text>Failed to load stats</Text>
+        <Text style={styles.errorText}>Failed to load dashboard stats</Text>
       </View>
     );
   }
 
   const chartData = {
-    labels: stats.last7Days.map((d: any) => d._id?.slice(5) || ""),
+    labels: stats.last7Days.map((d: any) => d._id?.slice(5) || ''),
     datasets: [
       {
         data: stats.last7Days.map((d: any) =>
-          typeof d.total === "number" ? d.total : 0
+          typeof d.total === 'number' ? d.total : 0
         ),
         strokeWidth: 2,
       },
@@ -74,46 +70,45 @@ const DashboardScreen = () => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Dashboard</Text>
+      <Text style={styles.heading}>📊 Dashboard</Text>
 
       <View style={styles.card}>
-        <Text style={styles.label}>Total Payments Today:</Text>
-        <Text style={styles.value}>{stats.totalToday}</Text>
+        <Text style={styles.cardLabel}>Total Payments Today</Text>
+        <Text style={styles.cardValue}>{stats.totalToday}</Text>
       </View>
 
       <View style={styles.card}>
-        <Text style={styles.label}>Total Revenue:</Text>
-        <Text style={styles.value}>
-          ₹{stats.totalRevenue.toLocaleString("en-IN")}
+        <Text style={styles.cardLabel}>Total Revenue</Text>
+        <Text style={styles.cardValue}>
+          ₹{stats.totalRevenue.toLocaleString('en-IN')}
         </Text>
       </View>
 
       <View style={styles.card}>
-        <Text style={styles.label}>Total Failed Payments:</Text>
-        <Text style={styles.value}>{stats.failedCount}</Text>
+        <Text style={styles.cardLabel}>Failed Payments</Text>
+        <Text style={[styles.cardValue, { color: '#D9534F' }]}>
+          {stats.failedCount}
+        </Text>
       </View>
 
-      <Text style={[styles.label, { marginTop: 32 }]}>Last 7 Days Revenue</Text>
+      <Text style={styles.chartTitle}>📈 Last 7 Days Revenue</Text>
       <LineChart
         data={chartData}
         width={Math.min(screenWidth - 40, 360)}
         height={220}
         chartConfig={{
-          backgroundColor: "#ffffff",
-          backgroundGradientFrom: "#f7f7f7",
-          backgroundGradientTo: "#f7f7f7",
+          backgroundColor: '#fff',
+          backgroundGradientFrom: '#eaf4ff',
+          backgroundGradientTo: '#eaf4ff',
           decimalPlaces: 0,
-          color: () => `#007bff`,
-          labelColor: () => "#555",
+          color: () => '#007AFF',
+          labelColor: () => '#333',
           style: {
             borderRadius: 16,
           },
         }}
         bezier
-        style={{
-          marginVertical: 8,
-          borderRadius: 16,
-        }}
+        style={styles.chart}
       />
     </ScrollView>
   );
@@ -124,30 +119,53 @@ export default DashboardScreen;
 const styles = StyleSheet.create({
   container: {
     padding: 20,
+    paddingBottom: 40,
   },
   center: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  title: {
+  heading: {
     fontSize: 28,
-    fontWeight: "bold",
+    fontWeight: '700',
     marginBottom: 24,
+    color: '#007AFF',
   },
   card: {
-    backgroundColor: "#f1f1f1",
-    padding: 16,
-    borderRadius: 12,
+    backgroundColor: '#fff',
+    padding: 18,
+    borderRadius: 14,
     marginBottom: 16,
+    elevation: 3,
+    shadowColor: '#aaa',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
   },
-  label: {
+  cardLabel: {
     fontSize: 16,
-    color: "#666",
+    color: '#666',
+    marginBottom: 4,
   },
-  value: {
-    fontSize: 22,
-    fontWeight: "bold",
-    color: "#222",
+  cardValue: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#111',
+  },
+  chartTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    marginTop: 30,
+    marginBottom: 10,
+    color: '#333',
+  },
+  chart: {
+    borderRadius: 16,
+    marginBottom: 40,
+  },
+  errorText: {
+    fontSize: 16,
+    color: '#cc0000',
   },
 });
