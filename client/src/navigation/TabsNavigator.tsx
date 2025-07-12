@@ -7,6 +7,7 @@ import LogoutScreen from '../screens/LogoutScreen';
 import UsersListScreen from '../screens/UsersListScreen';
 import { getUserRole } from '../utils/auth';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { View, ActivityIndicator } from 'react-native';
 
 const Tab = createBottomTabNavigator();
 
@@ -21,13 +22,19 @@ const TabsNavigator = () => {
     fetchRole();
   }, []);
 
-  if (role === null) return null; // Or splash/loading spinner
+  if (role === null) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
 
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ color, size }) => {
-          let iconName: keyof typeof Ionicons.glyphMap = 'home';
+          let iconName: keyof typeof Ionicons.glyphMap = 'home-outline';
 
           switch (route.name) {
             case 'Dashboard':

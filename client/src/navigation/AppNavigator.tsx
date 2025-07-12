@@ -28,7 +28,7 @@ const AppNavigator = () => {
   }, []);
 
   if (isAuthenticated === null) {
-    return null; // or splash screen
+    return null; 
   }
 
   return (
@@ -37,7 +37,8 @@ const AppNavigator = () => {
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Main" component={TabsNavigator} />
         <Stack.Screen name="TransactionDetails" component={TransactionDetailsScreen} options={{ title: 'Transaction', headerShown: true }} />
-        <Stack.Screen name="AddUser" component={AddUserScreen} /> {/* ✅ Add this */}
+        <Stack.Screen name="AddUser" component={AddUserScreen} /> 
+        {/* Add this */}
       </Stack.Navigator>
     </NavigationContainer>
   );

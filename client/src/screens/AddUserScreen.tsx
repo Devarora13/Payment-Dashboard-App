@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Alert,
   ActivityIndicator,
+  TouchableOpacity,
 } from 'react-native';
 import axios from 'axios';
 import { getToken } from '../utils/storage';
@@ -14,13 +15,14 @@ import { API_BASE_URL } from '@/constants/constant';
 import { Picker } from '@react-native-picker/picker';
 import { useNavigation } from '@react-navigation/native';
 import { getUserRole } from '../utils/auth';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 const AddUserScreen = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState<'admin' | 'viewer'>('viewer');
   const [loading, setLoading] = useState(false);
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
 
   // 🔐 Restrict access to admin only
   useEffect(() => {
@@ -64,6 +66,12 @@ const AddUserScreen = () => {
 
   return (
     <View style={styles.container}>
+      {/* 🔙 Back button */}
+      <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+        <Ionicons name="arrow-back" size={24} color="#007AFF" />
+        <Text style={styles.backText}>Back</Text>
+      </TouchableOpacity>
+
       <Text style={styles.title}>Add New User</Text>
 
       <TextInput
@@ -105,6 +113,16 @@ export default AddUserScreen;
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 20 },
+  backButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  backText: {
+    marginLeft: 6,
+    fontSize: 16,
+    color: '#007AFF',
+  },
   title: { fontSize: 22, fontWeight: 'bold', marginBottom: 20 },
   input: {
     borderWidth: 1,
