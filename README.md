@@ -36,25 +36,25 @@ A full-stack mobile app to track payments, manage users, and view analytics. Bui
 > Light, responsive UI with native feel
 
 - **Login**  
-![Login](screenshots/login.png)
+![Login](./screenshots/login.png)
 
 - **Dashboard**  
-![Dashboard](screenshots/dashboard.png)
+![Dashboard](./screenshots/dashboard.png)
 
 - **Transactions List**  
-![Transactions](screenshots/transactions.png)
+![Transactions](./screenshots/transactionlist.png)
 
 - **Transaction Details**  
-![Transaction Detail](screenshots/transaction-detail.png)
+![Transaction Detail](./screenshots/transaction-details.png)
 
 - **Add Payment**  
-![Add Payment](screenshots/add-payment.png)
+![Add Payment](./screenshots/add-payment.png)
 
 - **Users List** *(Admin)*  
-![Users](screenshots/users.png)
+![Users](./screenshots/user-list.png)
 
 - **Add User** *(Admin)*  
-![Add User](screenshots/add-user.png)
+![Add User](./screenshots/add-user.png)
 
 ---
 
@@ -175,16 +175,11 @@ npx expo start
 
 | Role    | Username | Password   |
 |---------|----------|------------|
-| Admin   | admin    | secret123  |
-| Viewer  | viewer1  | secret123  |
+| Admin   | admin    |  admin123  |
+| Viewer  | intern2  |  intern123 |
 
 ---
 
-## 📭 Postman Collection (optional)
-
-You can import `postman_collection.json` (if provided) to test APIs.
-
----
 
 ## 📌 Notes
 
